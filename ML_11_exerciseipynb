@@ -1,0 +1,921 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "1b057316-8538-4313-a820-45553953f54e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "\n",
+    "from sklearn.datasets import load_iris\n",
+    "\n",
+    "iris = load_iris()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "4e519cff-c595-48ab-9bee-eb5147e82968",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['DESCR',\n",
+       " 'data',\n",
+       " 'data_module',\n",
+       " 'feature_names',\n",
+       " 'filename',\n",
+       " 'frame',\n",
+       " 'target',\n",
+       " 'target_names']"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dir(iris)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "8f3ad115-d087-4ce1-9d15-936c7e64fa59",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[5.1, 3.5, 1.4, 0.2],\n",
+       "       [4.9, 3. , 1.4, 0.2],\n",
+       "       [4.7, 3.2, 1.3, 0.2],\n",
+       "       [4.6, 3.1, 1.5, 0.2],\n",
+       "       [5. , 3.6, 1.4, 0.2],\n",
+       "       [5.4, 3.9, 1.7, 0.4],\n",
+       "       [4.6, 3.4, 1.4, 0.3],\n",
+       "       [5. , 3.4, 1.5, 0.2],\n",
+       "       [4.4, 2.9, 1.4, 0.2],\n",
+       "       [4.9, 3.1, 1.5, 0.1],\n",
+       "       [5.4, 3.7, 1.5, 0.2],\n",
+       "       [4.8, 3.4, 1.6, 0.2],\n",
+       "       [4.8, 3. , 1.4, 0.1],\n",
+       "       [4.3, 3. , 1.1, 0.1],\n",
+       "       [5.8, 4. , 1.2, 0.2],\n",
+       "       [5.7, 4.4, 1.5, 0.4],\n",
+       "       [5.4, 3.9, 1.3, 0.4],\n",
+       "       [5.1, 3.5, 1.4, 0.3],\n",
+       "       [5.7, 3.8, 1.7, 0.3],\n",
+       "       [5.1, 3.8, 1.5, 0.3],\n",
+       "       [5.4, 3.4, 1.7, 0.2],\n",
+       "       [5.1, 3.7, 1.5, 0.4],\n",
+       "       [4.6, 3.6, 1. , 0.2],\n",
+       "       [5.1, 3.3, 1.7, 0.5],\n",
+       "       [4.8, 3.4, 1.9, 0.2],\n",
+       "       [5. , 3. , 1.6, 0.2],\n",
+       "       [5. , 3.4, 1.6, 0.4],\n",
+       "       [5.2, 3.5, 1.5, 0.2],\n",
+       "       [5.2, 3.4, 1.4, 0.2],\n",
+       "       [4.7, 3.2, 1.6, 0.2],\n",
+       "       [4.8, 3.1, 1.6, 0.2],\n",
+       "       [5.4, 3.4, 1.5, 0.4],\n",
+       "       [5.2, 4.1, 1.5, 0.1],\n",
+       "       [5.5, 4.2, 1.4, 0.2],\n",
+       "       [4.9, 3.1, 1.5, 0.2],\n",
+       "       [5. , 3.2, 1.2, 0.2],\n",
+       "       [5.5, 3.5, 1.3, 0.2],\n",
+       "       [4.9, 3.6, 1.4, 0.1],\n",
+       "       [4.4, 3. , 1.3, 0.2],\n",
+       "       [5.1, 3.4, 1.5, 0.2],\n",
+       "       [5. , 3.5, 1.3, 0.3],\n",
+       "       [4.5, 2.3, 1.3, 0.3],\n",
+       "       [4.4, 3.2, 1.3, 0.2],\n",
+       "       [5. , 3.5, 1.6, 0.6],\n",
+       "       [5.1, 3.8, 1.9, 0.4],\n",
+       "       [4.8, 3. , 1.4, 0.3],\n",
+       "       [5.1, 3.8, 1.6, 0.2],\n",
+       "       [4.6, 3.2, 1.4, 0.2],\n",
+       "       [5.3, 3.7, 1.5, 0.2],\n",
+       "       [5. , 3.3, 1.4, 0.2],\n",
+       "       [7. , 3.2, 4.7, 1.4],\n",
+       "       [6.4, 3.2, 4.5, 1.5],\n",
+       "       [6.9, 3.1, 4.9, 1.5],\n",
+       "       [5.5, 2.3, 4. , 1.3],\n",
+       "       [6.5, 2.8, 4.6, 1.5],\n",
+       "       [5.7, 2.8, 4.5, 1.3],\n",
+       "       [6.3, 3.3, 4.7, 1.6],\n",
+       "       [4.9, 2.4, 3.3, 1. ],\n",
+       "       [6.6, 2.9, 4.6, 1.3],\n",
+       "       [5.2, 2.7, 3.9, 1.4],\n",
+       "       [5. , 2. , 3.5, 1. ],\n",
+       "       [5.9, 3. , 4.2, 1.5],\n",
+       "       [6. , 2.2, 4. , 1. ],\n",
+       "       [6.1, 2.9, 4.7, 1.4],\n",
+       "       [5.6, 2.9, 3.6, 1.3],\n",
+       "       [6.7, 3.1, 4.4, 1.4],\n",
+       "       [5.6, 3. , 4.5, 1.5],\n",
+       "       [5.8, 2.7, 4.1, 1. ],\n",
+       "       [6.2, 2.2, 4.5, 1.5],\n",
+       "       [5.6, 2.5, 3.9, 1.1],\n",
+       "       [5.9, 3.2, 4.8, 1.8],\n",
+       "       [6.1, 2.8, 4. , 1.3],\n",
+       "       [6.3, 2.5, 4.9, 1.5],\n",
+       "       [6.1, 2.8, 4.7, 1.2],\n",
+       "       [6.4, 2.9, 4.3, 1.3],\n",
+       "       [6.6, 3. , 4.4, 1.4],\n",
+       "       [6.8, 2.8, 4.8, 1.4],\n",
+       "       [6.7, 3. , 5. , 1.7],\n",
+       "       [6. , 2.9, 4.5, 1.5],\n",
+       "       [5.7, 2.6, 3.5, 1. ],\n",
+       "       [5.5, 2.4, 3.8, 1.1],\n",
+       "       [5.5, 2.4, 3.7, 1. ],\n",
+       "       [5.8, 2.7, 3.9, 1.2],\n",
+       "       [6. , 2.7, 5.1, 1.6],\n",
+       "       [5.4, 3. , 4.5, 1.5],\n",
+       "       [6. , 3.4, 4.5, 1.6],\n",
+       "       [6.7, 3.1, 4.7, 1.5],\n",
+       "       [6.3, 2.3, 4.4, 1.3],\n",
+       "       [5.6, 3. , 4.1, 1.3],\n",
+       "       [5.5, 2.5, 4. , 1.3],\n",
+       "       [5.5, 2.6, 4.4, 1.2],\n",
+       "       [6.1, 3. , 4.6, 1.4],\n",
+       "       [5.8, 2.6, 4. , 1.2],\n",
+       "       [5. , 2.3, 3.3, 1. ],\n",
+       "       [5.6, 2.7, 4.2, 1.3],\n",
+       "       [5.7, 3. , 4.2, 1.2],\n",
+       "       [5.7, 2.9, 4.2, 1.3],\n",
+       "       [6.2, 2.9, 4.3, 1.3],\n",
+       "       [5.1, 2.5, 3. , 1.1],\n",
+       "       [5.7, 2.8, 4.1, 1.3],\n",
+       "       [6.3, 3.3, 6. , 2.5],\n",
+       "       [5.8, 2.7, 5.1, 1.9],\n",
+       "       [7.1, 3. , 5.9, 2.1],\n",
+       "       [6.3, 2.9, 5.6, 1.8],\n",
+       "       [6.5, 3. , 5.8, 2.2],\n",
+       "       [7.6, 3. , 6.6, 2.1],\n",
+       "       [4.9, 2.5, 4.5, 1.7],\n",
+       "       [7.3, 2.9, 6.3, 1.8],\n",
+       "       [6.7, 2.5, 5.8, 1.8],\n",
+       "       [7.2, 3.6, 6.1, 2.5],\n",
+       "       [6.5, 3.2, 5.1, 2. ],\n",
+       "       [6.4, 2.7, 5.3, 1.9],\n",
+       "       [6.8, 3. , 5.5, 2.1],\n",
+       "       [5.7, 2.5, 5. , 2. ],\n",
+       "       [5.8, 2.8, 5.1, 2.4],\n",
+       "       [6.4, 3.2, 5.3, 2.3],\n",
+       "       [6.5, 3. , 5.5, 1.8],\n",
+       "       [7.7, 3.8, 6.7, 2.2],\n",
+       "       [7.7, 2.6, 6.9, 2.3],\n",
+       "       [6. , 2.2, 5. , 1.5],\n",
+       "       [6.9, 3.2, 5.7, 2.3],\n",
+       "       [5.6, 2.8, 4.9, 2. ],\n",
+       "       [7.7, 2.8, 6.7, 2. ],\n",
+       "       [6.3, 2.7, 4.9, 1.8],\n",
+       "       [6.7, 3.3, 5.7, 2.1],\n",
+       "       [7.2, 3.2, 6. , 1.8],\n",
+       "       [6.2, 2.8, 4.8, 1.8],\n",
+       "       [6.1, 3. , 4.9, 1.8],\n",
+       "       [6.4, 2.8, 5.6, 2.1],\n",
+       "       [7.2, 3. , 5.8, 1.6],\n",
+       "       [7.4, 2.8, 6.1, 1.9],\n",
+       "       [7.9, 3.8, 6.4, 2. ],\n",
+       "       [6.4, 2.8, 5.6, 2.2],\n",
+       "       [6.3, 2.8, 5.1, 1.5],\n",
+       "       [6.1, 2.6, 5.6, 1.4],\n",
+       "       [7.7, 3. , 6.1, 2.3],\n",
+       "       [6.3, 3.4, 5.6, 2.4],\n",
+       "       [6.4, 3.1, 5.5, 1.8],\n",
+       "       [6. , 3. , 4.8, 1.8],\n",
+       "       [6.9, 3.1, 5.4, 2.1],\n",
+       "       [6.7, 3.1, 5.6, 2.4],\n",
+       "       [6.9, 3.1, 5.1, 2.3],\n",
+       "       [5.8, 2.7, 5.1, 1.9],\n",
+       "       [6.8, 3.2, 5.9, 2.3],\n",
+       "       [6.7, 3.3, 5.7, 2.5],\n",
+       "       [6.7, 3. , 5.2, 2.3],\n",
+       "       [6.3, 2.5, 5. , 1.9],\n",
+       "       [6.5, 3. , 5.2, 2. ],\n",
+       "       [6.2, 3.4, 5.4, 2.3],\n",
+       "       [5.9, 3. , 5.1, 1.8]])"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "iris.data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "06579757-5297-4b4c-8049-0b902517639e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['sepal length (cm)',\n",
+       " 'sepal width (cm)',\n",
+       " 'petal length (cm)',\n",
+       " 'petal width (cm)']"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "iris.feature_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "faf2e79e-ce2b-4c2b-932c-11b112a62356",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+       "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+       "       0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,\n",
+       "       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,\n",
+       "       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "iris.target"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "61aa79ca-dc29-4760-9c6e-72cb53d7932a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['setosa', 'versicolor', 'virginica'], dtype='<U10')"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "iris.target_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "e6937cae-5a66-46f4-b72d-9b007dba0abb",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(150, 4)"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "iris.data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "0becdf0c-a6a3-425a-8845-cabf00664f1e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5cb35a61-600a-4569-9ea0-62e40f3f5a6a",
+   "metadata": {},
+   "source": [
+    "# Logistic Regression"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "2c1a0c4a-e9b2-409c-b306-b15edb7f396d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9555555555555556"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lr = LogisticRegression()\n",
+    "lr.fit(X_train, y_train)\n",
+    "lr.score(X_test, y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a889d56e-0533-42f1-9ce3-0069d8f634db",
+   "metadata": {},
+   "source": [
+    "# SVM"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "328c1130-cd09-4f2d-9c3d-5fc7811d1825",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9777777777777777"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "svm = SVC()\n",
+    "svm.fit(X_train, y_train)\n",
+    "svm.score(X_test, y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "80e24ed9-5016-478e-bbfb-4e6685faaf22",
+   "metadata": {},
+   "source": [
+    "# Random Forest Classifier"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "42b67015-6fbe-4b1f-ba3e-8c5b26c7e460",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9555555555555556"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rf = RandomForestClassifier()\n",
+    "rf.fit(X_train, y_train)\n",
+    "rf.score(X_test, y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "82e22ebe-09d3-4f80-8c6a-71300fa96676",
+   "metadata": {},
+   "source": [
+    "# KFold Cross Validation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "8595eb3d-a305-4cf9-a12b-fe33c18274ca",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "KFold(n_splits=3, random_state=None, shuffle=False)"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import KFold\n",
+    "kf = KFold(n_splits=3)\n",
+    "kf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "a5c77a5b-5a55-4c4d-afbc-4aa00b2e1504",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[3 4 5 6 7 8] [0 1 2]\n",
+      "[0 1 2 6 7 8] [3 4 5]\n",
+      "[0 1 2 3 4 5] [6 7 8]\n"
+     ]
+    }
+   ],
+   "source": [
+    "for train_index, test_index in kf.split([1, 2, 3, 4, 5, 6, 7, 8, 9]):\n",
+    "    print(train_index, test_index)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ce6cd420-6321-4fa2-8cb8-3b58b14f0fa9",
+   "metadata": {},
+   "source": [
+    "# Generate Score through function"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "1b6fdd84-7a8a-45c8-b33b-11d3a12c2832",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_score(model, X_train, X_test, y_train, y_test):\n",
+    "    model.fit(X_train, y_train)\n",
+    "    return model.score(X_test, y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "902d9f77-d982-4c3b-ae1b-fe2ac9cc6c6d",
+   "metadata": {},
+   "source": [
+    "### Logistic Regression Score thourgh Function"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "320b1a3b-0760-449c-8289-b8b1dd009aae",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9555555555555556"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "get_score(LogisticRegression(), X_train, X_test, y_train,y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "23daf0cb-eb50-4826-bb4a-a3cd53866788",
+   "metadata": {},
+   "source": [
+    "### SVM Score thourgh Function"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "id": "1c4a5b8b-11d0-4871-91ab-4726b25c4fa4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9777777777777777"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "get_score(SVC(), X_train, X_test, y_train, y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dfe3a89b-7bc5-4648-b3f7-bf84cde368ed",
+   "metadata": {},
+   "source": [
+    "### Random Forest Classifier Score thourgh Function"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "3b3ca7be-8811-44a0-801c-50d4d0091a84",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9555555555555556"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "get_score(RandomForestClassifier(), X_train, X_test, y_train, y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae24376a-7dc9-4e9b-a6d7-5c1683adf145",
+   "metadata": {},
+   "source": [
+    "# StratifiedKFold"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "aa0fc4c7-def7-41bb-aba6-6e34f795540e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "StratifiedKFold(n_splits=3, random_state=None, shuffle=False)"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import StratifiedKFold\n",
+    "fold = StratifiedKFold(n_splits=3)\n",
+    "fold"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "1a5585e7-791a-4d0e-9726-795baf6d8cdf",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.98\n",
+      "0.96\n",
+      "0.98\n",
+      "0.96\n",
+      "0.98\n",
+      "0.94\n",
+      "0.98\n",
+      "0.94\n",
+      "0.96\n"
+     ]
+    }
+   ],
+   "source": [
+    "for train_index, test_index in fold.split(iris.data, iris.target):\n",
+    "    X_train, X_test, y_train, y_test = iris.data[train_index], iris.data[test_index], iris.target[train_index], iris.target[test_index]\n",
+    "\n",
+    "    print(get_score(LogisticRegression(), X_train, X_test, y_train, y_test))\n",
+    "    print(get_score(SVC(), X_train, X_test, y_train, y_test))\n",
+    "    print(get_score(RandomForestClassifier(n_estimators=40), X_train, X_test, y_train, y_test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "76ca130d-3cc9-4d71-984f-77ee8e951ccf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "score_lr = []\n",
+    "score_svm = []\n",
+    "score_rf = []\n",
+    "for train_index, test_index in fold.split(iris.data, iris.target):\n",
+    "    X_train, X_test, y_train, y_test = iris.data[train_index], iris.data[test_index], iris.target[train_index], iris.target[test_index]\n",
+    "\n",
+    "    score_lr.append(get_score(LogisticRegression(), X_train, X_test, y_train, y_test))\n",
+    "    score_svm.append(get_score(SVC(), X_train, X_test, y_train, y_test))\n",
+    "    score_rf.append(get_score(RandomForestClassifier(n_estimators=40), X_train, X_test, y_train, y_test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "47332617-6b9f-4f03-9ddf-4a158dc26c50",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0.98, 0.96, 0.98]"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "score_lr"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "986f38ec-5c65-4977-8257-d13659af8c29",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0.96, 0.98, 0.94]"
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "score_svm"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "47e8f16b-e8e2-4327-a2ac-f2c4340bfd2c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0.98, 0.94, 0.92]"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "score_rf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "ef8c453f-eb85-4315-a632-ecf89a535271",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.9733333333333333\n"
+     ]
+    }
+   ],
+   "source": [
+    "acc_lr = 0\n",
+    "count = 0\n",
+    "for i in score_lr:\n",
+    "    acc_lr += i\n",
+    "    count += 1\n",
+    "accuracy_lr = acc_lr / count\n",
+    "print(accuracy_lr)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "id": "d1c82dab-988c-4d0a-bf05-fecc8cc26777",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.96\n"
+     ]
+    }
+   ],
+   "source": [
+    "acc_svm = 0\n",
+    "count = 0\n",
+    "for i in score_svm:\n",
+    "    acc_svm += i\n",
+    "    count += 1\n",
+    "accuracy_svm = acc_svm / count\n",
+    "print(accuracy_svm)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "id": "536eaa83-0559-4d0c-a857-29c5f787e07e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.9466666666666667\n"
+     ]
+    }
+   ],
+   "source": [
+    "acc_rf = 0\n",
+    "count = 0\n",
+    "for i in score_rf:\n",
+    "    acc_rf += i\n",
+    "    count += 1\n",
+    "accuracy_rf = acc_rf / count\n",
+    "print(accuracy_rf)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8a8fbbf9-0bf2-41a1-9efb-7810077d716d",
+   "metadata": {},
+   "source": [
+    "# Cross Validation Score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "id": "78f4025c-8001-4809-8bd8-ee9cd7ed1725",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import cross_val_score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "0c71b871-b61b-4f86-b3f5-f01f5d945da5",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.96666667, 1.        , 0.93333333, 0.96666667, 1.        ])"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cross_val_score(LogisticRegression(), iris.data, iris.target)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "7943289d-d516-4076-ad0c-f78698dee75b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.96666667, 0.96666667, 0.96666667, 0.93333333, 1.        ])"
+      ]
+     },
+     "execution_count": 54,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cross_val_score(SVC(), iris.data, iris.target)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "3df7cc45-7504-4a3e-96c9-7ab7d6fec746",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.96666667, 0.96666667, 0.93333333, 0.93333333, 1.        ])"
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cross_val_score(RandomForestClassifier(), iris.data, iris.target)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e13965bb-b937-42c5-9f41-d9bc2d93b94b",
+   "metadata": {},
+   "source": [
+    "### Hyperparameter Tuning"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "08f2b992-fd11-4bfb-a64f-3ad67b429f6a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cross_val_score(RandomForestClassifier(n_estimators=40), iris.data, iris.target)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1e6c9d6c-89da-494a-8705-b86a1f1ab732",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
